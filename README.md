@@ -90,34 +90,58 @@ FROM GIAODICH_CLEAN_2
 - **Kết nối Power BI với SQL Server** để tải dữ liệu.
 - **Chuyển đổi dữ liệu bằng Power Query**, như đổi kiểu dữ liệu, tạo bảng tham chiếu.
 
-📌 *Hình minh họa:* ![Image](https://github.com/user-attachments/assets/1df4ffe5-0289-4d5e-af0c-474faf9fea46)
+![Image](https://github.com/user-attachments/assets/1df4ffe5-0289-4d5e-af0c-474faf9fea46)
 
 ## 📈 Phân Tích Dữ Liệu với DAX
 
 - **Tạo Measures & Calculated Columns** để phân tích dữ liệu.
+- **Ví dụ***
+- Đếm số lượng mã giảm bằng DAX
+```
+Số lượng mã Giảm = COUNTROWS(FILTER(TB_GIAODICH, TB_GIAODICH[TRANGTHAI] = "GIẢM"))
+```
+-  Hoặc đặt màu cho trạng thái mã cổ phiếu
+```
+Màu trạng thái trần = SWITCH(
+    TRUE(),
+    [Tổng giá cao nhất] < [Tổng giá mở cửa],
+    "#ff3737",
+    [Tổng giá cao nhất] > [Tổng giá mở cửa],
+    "#0f0",
+    [Tổng giá cao nhất] = [Tổng giá mở cửa],
+    "#FFA500"
+)
+```
 - **Xây dựng bảng hỗ trợ** như `Calendar`, `Khối Lượng Giao Dịch Table`, `Color Table`.
+```
+Calendar = ADDCOLUMNS(
+    CALENDAR(MIN(TB_GIAODICH[NGAYGIAODICH]),MAX(TB_GIAODICH[NGAYGIAODICH])),
+    "NAM", YEAR([Date]),
+    "THANG", MONTH([Date]),
+    "MonthName", FORMAT(MONTH([Date]),"MMMM"),
+    "NGAYTRONGTUAN", FORMAT(DAY([Date]),"DDDD"),
+    "QUY", FORMAT(QUARTER([Date]),"Q"),
+    "NAMQUY",FORMAT([Date],"YYYY") & "/Q" & FORMAT(QUARTER([Date]),"Q")
+)
+```
 - **Tính toán các chỉ số quan trọng**, phân loại trạng thái giao dịch.
+```
+TRANGTHAI = IF(TB_GIAODICH[GIAMOCUA] > TB_GIAODICH[GIADONGCUA] , "GIẢM",
+            IF(TB_GIAODICH[GIAMOCUA] = TB_GIAODICH[GIADONGCUA], "THAM CHIẾU", "TĂNG"))
+```
 
-📌 *Hình minh họa:* [Link ảnh mẫu](#)
 
 ## 🎨 Trực Quan Hóa Dữ Liệu
 
 - **Thiết kế biểu đồ và dashboard** với Power BI.
 - **Tạo báo cáo động**, sử dụng slicer, filter để dễ dàng phân tích.
-- **Sử dụng các loại biểu đồ phù hợp**, như Candlestick cho chứng khoán.
+- **Sử dụng các loại biểu đồ phù hợp**, như KPI, TreeMap, Line chart cho các mã cổ phiếu chứng khoán.
 
-📌 *Hình minh họa:* [Link ảnh mẫu](#)
-
-## ☁️ Xuất Bản Báo Cáo
-
-- **Xuất bản báo cáo lên Power BI Service** để chia sẻ và tương tác trực tuyến.
-- **Hoàn thiện tài liệu dự án**, bao gồm báo cáo chi tiết và slide trình bày.
-
-📌 *Hình minh họa:* [Link ảnh mẫu](#)
+![Image](https://github.com/user-attachments/assets/dbbd12da-8ab6-4cde-b251-ff5ca7a58645)
 
 ## 📌 Kết Luận
 
 Dự án giúp nâng cao kỹ năng xử lý dữ liệu, từ SQL đến Power BI, và tạo ra một hệ thống báo cáo trực quan, hỗ trợ ra quyết định kinh doanh hiệu quả.
-
-📌 *Hình minh họa:* [Link ảnh mẫu](#)
+Mục tiêu của dự án hướng tới là tạo dashboard động cũng như tính toán các chỉ số cơ bản trong chứng khoán, nhằm thực hành các kỹ năng đã học.
+Để biết thêm về mục tiêu của từng phần, vui lòng đọc file 'report.pdf'
 
