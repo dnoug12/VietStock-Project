@@ -21,7 +21,7 @@ Cần cài đặt các phần mềm sau:
 - **Xóa dữ liệu trùng lặp**, kiểm tra tính hợp lý của dữ liệu.
 - **Lưu trữ dữ liệu sạch** vào các bảng như `GIAODICH_CLEAN_1`, `GIAODICH_CLEAN_2`.
 - **Xem thêm ở file Process.sql
-📌 *Hình minh họa:* [file:///C:/Users/duydu/OneDrive/Pictures/Screenshots%201/Screenshot%202025-03-27%20105430.png](#)
+📌 *Hình minh họa:* <!-- Uploading "Screenshot 2025-03-27 105430.png"... -->
 
 ## 🔄 Chuyển Đổi Dữ Liệu
 
