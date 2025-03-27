@@ -1,0 +1,86 @@
+﻿USE SAMPLE
+
+CREATE TABLE GIAODICH_CLEAN (
+	MaCK nvarchar(255),
+	NGAYGIAODICH varchar(8),
+	GIAMOCUA float,
+	GIACAONHAT float,
+	GIATHAPNHAT float,
+	GIADONGCUA float,
+	KHOILUONGGIAODICH float,
+	TENNHOMNGANH nvarchar(255),
+	MANHOMNGANH nvarchar(255),
+	THONGTINCONGTY nvarchar(255),
+	SAN nvarchar(255),
+	CONGTY nvarchar(255),
+	TENSAN_VIET nvarchar(255),
+	TENSAN_ANH nvarchar(255),
+	BIENDODAODONG float
+)
+
+SELECT *
+FROM GIAODICH_CLEAN
+
+INSERT INTO GIAODICH_CLEAN
+SELECT * FROM GIAODICH
+
+
+--1.Loại bỏ các dòng dữ liệu bị trùng (duplicate data)
+--2.Duplicate data (trong ngữ cảnh bộ dataset này) khi giá trị ở các Cột trên Dòng
+--giống nhau là
+--([MaCK],[NGAYGIAODICH],[GIAMOCUA],[GIACAONHAT],[GIATHAPNH
+--AT],[GIADONGCUA],[KHOILUONGGIAODICH])
+--3.Các dòng trùng sẽ bị gán giá trị > 1 trên cột DuplicateRow
+--4.Insert các dòng không trùng vào table GIAODICH_CLEAN_2
+SELECT * INTO GIAODICH_CLEAN_2
+FROM 
+(
+	SELECT *
+	, DUPLICATEROW = ROW_NUMBER() OVER
+	(
+		PARTITION BY
+		[MaCK],
+		[NGAYGIAODICH],
+		[GIAMOCUA],
+		[GIATHAPNHAT],
+		[GIADONGCUA],
+		[KHOILUONGGIAODICH]
+	ORDER BY (SELECT NULL)
+	) 
+	FROM GIAODICH_CLEAN
+	) TEMP
+WHERE TEMP.DUPLICATEROW = 1
+
+--CHECK
+SELECT * 
+FROM GIAODICH_CLEAN_2 
+WHERE KHOILUONGGIAODICH like '14045'
+
+--- Chuyển đổi dữ liệu
+--1.Định dạng lại cột [NGAYGIAODICH]
+SELECT	MaCK,
+		FORMAT(try_CONVERT(datetime,NGAYGIAODICH), 'd','us') as NGAYGIAODICH,
+		GIAMOCUA,
+		GIACAONHAT,
+		GIATHAPNHAT,
+		GIADONGCUA,
+		KHOILUONGGIAODICH,
+--2.Thêm Giá trần = Giá tham chiếu (mở cửa) x (100% + Biên độ dao động)
+		FORMAT( GIAMOCUA * (1 + BIENDODAODONG), 'F', 'en-us') AS GIATRAN,
+--3.Thêm Giá sàn = Giá tham chiếu (mở cửa) x (100% – Biên độ dao động)
+		FORMAT(GIAMOCUA * (1-BIENDODAODONG), 'F', 'en-us') AS GIASAN,
+--4.Tỷ lệ tăng giảm trong ngày: TILETRONGNGAY = ([GIADONGCUA]-[GIAMOCUA])*100/[GIAMOCUA]
+		FORMAT(GIADONGCUA - GIAMOCUA * 100/GIAMOCUA, 'F', 'en-us') AS TILETRONGNGAY,
+		TENNHOMNGANH,
+		MANHOMNGANH,
+		THONGTINCONGTY,
+		SAN,
+		CONGTY,
+		TENSAN_ANH,
+		TENSAN_VIET,
+		BIENDODAODONG,
+		DUPLICATEROW
+--5.Insert tất cả các dòng vào table GIAODICH_FINAL
+INTO GIAODICH_FINAL
+FROM GIAODICH_CLEAN_2
+
