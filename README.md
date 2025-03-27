@@ -21,31 +21,31 @@ Cần cài đặt các phần mềm sau:
 - **Xóa dữ liệu trùng lặp**, kiểm tra tính hợp lý của dữ liệu.
 - **Lưu trữ dữ liệu sạch** vào các bảng như `GIAODICH_CLEAN_1`, `GIAODICH_CLEAN_2`.
 ```
-	USE SAMPLE
-	
-	CREATE TABLE GIAODICH_CLEAN (
-		MaCK nvarchar(255),
-		NGAYGIAODICH varchar(8),
-		GIAMOCUA float,
-		GIACAONHAT float,
-		GIATHAPNHAT float,
-		GIADONGCUA float,
-		KHOILUONGGIAODICH float,
-		TENNHOMNGANH nvarchar(255),
-		MANHOMNGANH nvarchar(255),
-		THONGTINCONGTY nvarchar(255),
-		SAN nvarchar(255),
-		CONGTY nvarchar(255),
-		TENSAN_VIET nvarchar(255),
-		TENSAN_ANH nvarchar(255),
-		BIENDODAODONG float
-	)
-	
-	SELECT *
-	FROM GIAODICH_CLEAN
-	
-	INSERT INTO GIAODICH_CLEAN
-	SELECT * FROM GIAODICH
+USE SAMPLE
+
+CREATE TABLE GIAODICH_CLEAN (
+	MaCK nvarchar(255),
+	NGAYGIAODICH varchar(8),
+	GIAMOCUA float,
+	GIACAONHAT float,
+	GIATHAPNHAT float,
+	GIADONGCUA float,
+	KHOILUONGGIAODICH float,
+	TENNHOMNGANH nvarchar(255),
+	MANHOMNGANH nvarchar(255),
+	THONGTINCONGTY nvarchar(255),
+	SAN nvarchar(255),
+	CONGTY nvarchar(255),
+	TENSAN_VIET nvarchar(255),
+	TENSAN_ANH nvarchar(255),
+	BIENDODAODONG float
+)
+
+SELECT *
+FROM GIAODICH_CLEAN
+
+INSERT INTO GIAODICH_CLEAN
+SELECT * FROM GIAODICH
 ```
 > Xem thêm ở file 'Process.sql'
 
