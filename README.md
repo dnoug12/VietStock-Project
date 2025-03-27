@@ -12,7 +12,7 @@ Cần cài đặt các phần mềm sau:
 - **Power BI Desktop** – Công cụ trực quan hóa dữ liệu.
 
 **Khôi phục dữ liệu mẫu:**
-- Sử dụng file backup (`SAMPLE.bak`) để phục hồi dữ liệu trong SSMS.
+- Sử dụng file backup `SAMPLE.bak` trong folder 'resource' để phục hồi dữ liệu trong SSMS.
 - Thực hiện restore bằng **Wizard** (Khuyến nghị) hoặc **Script**.
 
 ## 🧹 Chuẩn Bị và Làm Sạch Dữ Liệu
