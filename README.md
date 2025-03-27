@@ -56,34 +56,33 @@ Cần cài đặt các phần mềm sau:
 - **Tạo bộ dữ liệu chuẩn** sẵn sàng cho phân tích và trực quan hóa.
 - **Ví dụ**
 ```
-	SELECT	MaCK,
-		FORMAT(try_CONVERT(datetime,NGAYGIAODICH), 'd','us') as NGAYGIAODICH,
-		GIAMOCUA,
-		GIACAONHAT,
-		GIATHAPNHAT,
-		GIADONGCUA,
-		KHOILUONGGIAODICH,
+SELECT	MaCK,
+	FORMAT(try_CONVERT(datetime,NGAYGIAODICH), 'd','us') as NGAYGIAODICH,
+	GIAMOCUA,
+	GIACAONHAT,
+	GIATHAPNHAT,
+	GIADONGCUA,
+	KHOILUONGGIAODICH,
 --2.Thêm Giá trần = Giá tham chiếu (mở cửa) x (100% + Biên độ dao động)
-		FORMAT( GIAMOCUA * (1 + BIENDODAODONG), 'F', 'en-us') AS GIATRAN,
+	FORMAT( GIAMOCUA * (1 + BIENDODAODONG), 'F', 'en-us') AS GIATRAN,
 --3.Thêm Giá sàn = Giá tham chiếu (mở cửa) x (100% – Biên độ dao động)
-		FORMAT(GIAMOCUA * (1-BIENDODAODONG), 'F', 'en-us') AS GIASAN,
+	FORMAT(GIAMOCUA * (1-BIENDODAODONG), 'F', 'en-us') AS GIASAN,
 --4.Tỷ lệ tăng giảm trong ngày: TILETRONGNGAY = ([GIADONGCUA]-[GIAMOCUA])*100/[GIAMOCUA]
-		FORMAT(GIADONGCUA - GIAMOCUA * 100/GIAMOCUA, 'F', 'en-us') AS TILETRONGNGAY,
-		TENNHOMNGANH,
-		MANHOMNGANH,
-		THONGTINCONGTY,
-		SAN,
-		CONGTY,
-		TENSAN_ANH,
-		TENSAN_VIET,
-		BIENDODAODONG,
-		DUPLICATEROW
+	FORMAT(GIADONGCUA - GIAMOCUA * 100/GIAMOCUA, 'F', 'en-us') AS TILETRONGNGAY,
+	TENNHOMNGANH,
+	MANHOMNGANH,
+	THONGTINCONGTY,
+	SAN,
+	CONGTY,
+	TENSAN_ANH,
+	TENSAN_VIET,
+	BIENDODAODONG,
+	DUPLICATEROW
 --5.Insert tất cả các dòng vào table GIAODICH_FINAL
 INTO GIAODICH_FINAL
 FROM GIAODICH_CLEAN_2
 ```
 
-📌 *Hình minh họa:* [Link ảnh mẫu](#)
 
 ## 📊 Mô Hình Hóa Dữ Liệu
 
@@ -91,7 +90,7 @@ FROM GIAODICH_CLEAN_2
 - **Kết nối Power BI với SQL Server** để tải dữ liệu.
 - **Chuyển đổi dữ liệu bằng Power Query**, như đổi kiểu dữ liệu, tạo bảng tham chiếu.
 
-📌 *Hình minh họa:* [Link ảnh mẫu](#)
+📌 *Hình minh họa:* ![Image](https://github.com/user-attachments/assets/1df4ffe5-0289-4d5e-af0c-474faf9fea46)
 
 ## 📈 Phân Tích Dữ Liệu với DAX
 
