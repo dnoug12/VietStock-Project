@@ -141,8 +141,7 @@ TRANGTHAI = IF(TB_GIAODICH[GIAMOCUA] > TB_GIAODICH[GIADONGCUA] , "GIẢM",
 ![Image](https://github.com/user-attachments/assets/dbbd12da-8ab6-4cde-b251-ff5ca7a58645)
 
 ## 📌 Kết Luận
-
-Dự án giúp nâng cao kỹ năng xử lý dữ liệu, từ SQL đến Power BI, và tạo ra một hệ thống báo cáo trực quan, hỗ trợ ra quyết định kinh doanh hiệu quả.
-Mục tiêu của dự án hướng tới là tạo dashboard động cũng như tính toán các chỉ số cơ bản trong chứng khoán, nhằm thực hành các kỹ năng đã học.
-Để biết thêm về mục tiêu của từng phần, vui lòng đọc file 'report.pdf'
+- Dự án giúp nâng cao kỹ năng xử lý dữ liệu, từ SQL đến Power BI, và tạo ra một hệ thống báo cáo trực quan, hỗ trợ ra quyết định kinh doanh hiệu quả.
+- Mục tiêu của dự án hướng tới là tạo dashboard động cũng như tính toán các chỉ số cơ bản trong chứng khoán, nhằm thực hành các kỹ năng đã học.
+- Để biết thêm về mục tiêu của từng phần, vui lòng đọc file **report.pdf**
 
