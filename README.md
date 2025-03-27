@@ -20,41 +20,68 @@ Cần cài đặt các phần mềm sau:
 - **Nhân bản cơ sở dữ liệu mẫu** để tạo **Staging Database**, tránh ảnh hưởng dữ liệu gốc.
 - **Xóa dữ liệu trùng lặp**, kiểm tra tính hợp lý của dữ liệu.
 - **Lưu trữ dữ liệu sạch** vào các bảng như `GIAODICH_CLEAN_1`, `GIAODICH_CLEAN_2`.
-- **Xem thêm ở file Process.sql
-
 ```
-  ﻿USE SAMPLE
-
-CREATE TABLE GIAODICH_CLEAN (
-	MaCK nvarchar(255),
-	NGAYGIAODICH varchar(8),
-	GIAMOCUA float,
-	GIACAONHAT float,
-	GIATHAPNHAT float,
-	GIADONGCUA float,
-	KHOILUONGGIAODICH float,
-	TENNHOMNGANH nvarchar(255),
-	MANHOMNGANH nvarchar(255),
-	THONGTINCONGTY nvarchar(255),
-	SAN nvarchar(255),
-	CONGTY nvarchar(255),
-	TENSAN_VIET nvarchar(255),
-	TENSAN_ANH nvarchar(255),
-	BIENDODAODONG float
-)
-
-SELECT *
-FROM GIAODICH_CLEAN
-
-INSERT INTO GIAODICH_CLEAN
-SELECT * FROM GIAODICH
+	USE SAMPLE
+	
+	CREATE TABLE GIAODICH_CLEAN (
+		MaCK nvarchar(255),
+		NGAYGIAODICH varchar(8),
+		GIAMOCUA float,
+		GIACAONHAT float,
+		GIATHAPNHAT float,
+		GIADONGCUA float,
+		KHOILUONGGIAODICH float,
+		TENNHOMNGANH nvarchar(255),
+		MANHOMNGANH nvarchar(255),
+		THONGTINCONGTY nvarchar(255),
+		SAN nvarchar(255),
+		CONGTY nvarchar(255),
+		TENSAN_VIET nvarchar(255),
+		TENSAN_ANH nvarchar(255),
+		BIENDODAODONG float
+	)
+	
+	SELECT *
+	FROM GIAODICH_CLEAN
+	
+	INSERT INTO GIAODICH_CLEAN
+	SELECT * FROM GIAODICH
 ```
+> Xem thêm ở file 'Process.sql'
 
 ## 🔄 Chuyển Đổi Dữ Liệu
 
 - **Chuẩn hóa định dạng dữ liệu**, sửa lỗi, chuyển đổi kiểu dữ liệu.
 - **Tính toán các chỉ số bổ sung** như giá trần, giá sàn, tỷ lệ tăng giảm.
 - **Tạo bộ dữ liệu chuẩn** sẵn sàng cho phân tích và trực quan hóa.
+- **Ví dụ**
+```
+	SELECT	MaCK,
+		FORMAT(try_CONVERT(datetime,NGAYGIAODICH), 'd','us') as NGAYGIAODICH,
+		GIAMOCUA,
+		GIACAONHAT,
+		GIATHAPNHAT,
+		GIADONGCUA,
+		KHOILUONGGIAODICH,
+--2.Thêm Giá trần = Giá tham chiếu (mở cửa) x (100% + Biên độ dao động)
+		FORMAT( GIAMOCUA * (1 + BIENDODAODONG), 'F', 'en-us') AS GIATRAN,
+--3.Thêm Giá sàn = Giá tham chiếu (mở cửa) x (100% – Biên độ dao động)
+		FORMAT(GIAMOCUA * (1-BIENDODAODONG), 'F', 'en-us') AS GIASAN,
+--4.Tỷ lệ tăng giảm trong ngày: TILETRONGNGAY = ([GIADONGCUA]-[GIAMOCUA])*100/[GIAMOCUA]
+		FORMAT(GIADONGCUA - GIAMOCUA * 100/GIAMOCUA, 'F', 'en-us') AS TILETRONGNGAY,
+		TENNHOMNGANH,
+		MANHOMNGANH,
+		THONGTINCONGTY,
+		SAN,
+		CONGTY,
+		TENSAN_ANH,
+		TENSAN_VIET,
+		BIENDODAODONG,
+		DUPLICATEROW
+--5.Insert tất cả các dòng vào table GIAODICH_FINAL
+INTO GIAODICH_FINAL
+FROM GIAODICH_CLEAN_2
+```
 
 📌 *Hình minh họa:* [Link ảnh mẫu](#)
 
