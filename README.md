@@ -89,6 +89,7 @@ FROM GIAODICH_CLEAN_2
 - **Tạo database mới "Spend"** từ Staging database.
 - **Kết nối Power BI với SQL Server** để tải dữ liệu.
 - **Chuyển đổi dữ liệu bằng Power Query**, như đổi kiểu dữ liệu, tạo bảng tham chiếu.
+- Có thể chọn SQL Server để tạo model, hoặc có thể sử dụng tính năng tự động Modeling của Power BI
 
 ![Image](https://github.com/user-attachments/assets/1df4ffe5-0289-4d5e-af0c-474faf9fea46)
 
