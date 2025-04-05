@@ -137,6 +137,8 @@ TRANGTHAI = IF(
 - **Create dynamic reports**, with slicers and filters for easier analysis.
 - **Use appropriate visual types**, like KPIs, TreeMap, Line Charts for stock data.
 
+![Image](https://github.com/user-attachments/assets/ab801c09-5c4c-41dc-aec8-acbfe8899bce)
+
 ## 📌 Conclusion
 
 - This project enhances your data processing skills, from SQL to Power BI, and helps build interactive dashboards that support business decision-making.
