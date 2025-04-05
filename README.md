@@ -1,26 +1,27 @@
-# 📊 Hệ Thống Phân Tích và Trực Quan Hóa Dữ Liệu
+# 📊 Data Analysis and Visualization System
 
-## 🚀 Giới Thiệu
+## 🚀 Introduction
 
-Dự án này nhằm xây dựng một hệ thống phân tích và trực quan hóa dữ liệu hoàn chỉnh, từ việc chuẩn bị môi trường, làm sạch dữ liệu, mô hình hóa đến trực quan hóa và xuất bản báo cáo.
+This project aims to build a complete data analysis and visualization system—from environment setup, data cleaning, and modeling to visualization and report publishing.
 
-## 🛠️ Cài Đặt Môi Trường
+## 🛠️ Environment Setup
 
-Cần cài đặt các phần mềm sau:
-- **SQL Server Express Edition** – Cơ sở dữ liệu để lưu trữ và truy vấn dữ liệu.
-- **SQL Server Management Studio (SSMS)** – Công cụ quản lý SQL Server.
-- **Power BI Desktop** – Công cụ trực quan hóa dữ liệu.
+Please install the following software:
+- **SQL Server Express Edition** – Used to store and query data.
+- **SQL Server Management Studio (SSMS)** – Tool to manage SQL Server.
+- **Power BI Desktop** – Data visualization tool.
 
-**Khôi phục dữ liệu mẫu:**
-- Sử dụng file backup `SAMPLE.bak` trong folder `resource` để phục hồi dữ liệu trong SSMS.
-- Thực hiện restore bằng **Wizard** (Khuyến nghị) hoặc **Script**.
+**Restore sample data:**
+- Use the `SAMPLE.bak` file in the `resource` folder to restore the database in SSMS.
+- Perform the restore using the **Wizard** (recommended) or **Script**.
 
-## 🧹 Chuẩn Bị và Làm Sạch Dữ Liệu
+## 🧹 Data Preparation and Cleaning
 
-- **Nhân bản cơ sở dữ liệu mẫu** để tạo **Staging Database**, tránh ảnh hưởng dữ liệu gốc.
-- **Xóa dữ liệu trùng lặp**, kiểm tra tính hợp lý của dữ liệu.
-- **Lưu trữ dữ liệu sạch** vào các bảng như `GIAODICH_CLEAN_1`, `GIAODICH_CLEAN_2`.
-```
+- **Clone the sample database** to create a **Staging Database**, to prevent changes to the original data.
+- **Remove duplicates** and check data consistency.
+- **Save clean data** into tables like `GIAODICH_CLEAN_1`, `GIAODICH_CLEAN_2`.
+
+```sql
 USE SAMPLE
 
 CREATE TABLE GIAODICH_CLEAN (
@@ -41,34 +42,36 @@ CREATE TABLE GIAODICH_CLEAN (
 	BIENDODAODONG float
 )
 
-SELECT *
-FROM GIAODICH_CLEAN
+SELECT * FROM GIAODICH_CLEAN
 
 INSERT INTO GIAODICH_CLEAN
 SELECT * FROM GIAODICH
 ```
-> Xem thêm ở file 'Process.sql'
 
-## 🔄 Chuyển Đổi Dữ Liệu
+> See more in `Process.sql` file.
 
-- **Chuẩn hóa định dạng dữ liệu**, sửa lỗi, chuyển đổi kiểu dữ liệu.
-- **Tính toán các chỉ số bổ sung** như giá trần, giá sàn, tỷ lệ tăng giảm.
-- **Tạo bộ dữ liệu chuẩn** sẵn sàng cho phân tích và trực quan hóa.
-- **Ví dụ**
-```
-SELECT	MaCK,
-	FORMAT(try_CONVERT(datetime,NGAYGIAODICH), 'd','us') as NGAYGIAODICH,
+## 🔄 Data Transformation
+
+- **Standardize data format**, correct errors, convert data types.
+- **Calculate additional indicators** such as ceiling/floor prices, percentage changes.
+- **Create final datasets** ready for analysis and visualization.
+
+**Example:**
+```sql
+SELECT	
+	MaCK,
+	FORMAT(TRY_CONVERT(datetime, NGAYGIAODICH), 'd', 'us') AS NGAYGIAODICH,
 	GIAMOCUA,
 	GIACAONHAT,
 	GIATHAPNHAT,
 	GIADONGCUA,
 	KHOILUONGGIAODICH,
---2.Thêm Giá trần = Giá tham chiếu (mở cửa) x (100% + Biên độ dao động)
-	FORMAT( GIAMOCUA * (1 + BIENDODAODONG), 'F', 'en-us') AS GIATRAN,
---3.Thêm Giá sàn = Giá tham chiếu (mở cửa) x (100% – Biên độ dao động)
-	FORMAT(GIAMOCUA * (1-BIENDODAODONG), 'F', 'en-us') AS GIASAN,
---4.Tỷ lệ tăng giảm trong ngày: TILETRONGNGAY = ([GIADONGCUA]-[GIAMOCUA])*100/[GIAMOCUA]
-	FORMAT(GIADONGCUA - GIAMOCUA * 100/GIAMOCUA, 'F', 'en-us') AS TILETRONGNGAY,
+-- 2. Ceiling Price = Open Price × (100% + Volatility)
+	FORMAT(GIAMOCUA * (1 + BIENDODAODONG), 'F', 'en-us') AS GIATRAN,
+-- 3. Floor Price = Open Price × (100% – Volatility)
+	FORMAT(GIAMOCUA * (1 - BIENDODAODONG), 'F', 'en-us') AS GIASAN,
+-- 4. Daily % Change = (Close - Open) * 100 / Open
+	FORMAT((GIADONGCUA - GIAMOCUA) * 100 / GIAMOCUA, 'F', 'en-us') AS TILETRONGNGAY,
 	TENNHOMNGANH,
 	MANHOMNGANH,
 	THONGTINCONGTY,
@@ -78,70 +81,98 @@ SELECT	MaCK,
 	TENSAN_VIET,
 	BIENDODAODONG,
 	DUPLICATEROW
---5.Insert tất cả các dòng vào table GIAODICH_FINAL
+-- 5. Insert all into final table
 INTO GIAODICH_FINAL
 FROM GIAODICH_CLEAN_2
 ```
 
+## 📊 Data Modeling
 
-## 📊 Mô Hình Hóa Dữ Liệu
+- **Create a new database "Spend"** from the staging database.
+- **Connect Power BI to SQL Server** to load data.
+- **Transform data in Power Query**, e.g., change data types, create lookup tables.
+- You can choose to model in **SQL Server** or use **Auto Modeling** in Power BI.
 
-- **Tạo database mới "Spend"** từ Staging database.
-- **Kết nối Power BI với SQL Server** để tải dữ liệu.
-- **Chuyển đổi dữ liệu bằng Power Query**, như đổi kiểu dữ liệu, tạo bảng tham chiếu.
-- Có thể chọn SQL Server để tạo model, hoặc có thể sử dụng tính năng tự động Modeling của Power BI
+## 📈 Data Analysis with DAX
 
-![Image](https://github.com/user-attachments/assets/1df4ffe5-0289-4d5e-af0c-474faf9fea46)
-
-## 📈 Phân Tích Dữ Liệu với DAX
-
-- **Tạo Measures & Calculated Columns** để phân tích dữ liệu.
-- **Ví dụ***
-- Đếm số lượng mã giảm bằng DAX
+- **Create Measures & Calculated Columns** for analysis.
+- **Examples**:
+Count the number of decreasing stocks:
+```DAX
+Decreasing Stocks = COUNTROWS(FILTER(TB_GIAODICH, TB_GIAODICH[TRANGTHAI] = "DECREASE"))
 ```
-Số lượng mã Giảm = COUNTROWS(FILTER(TB_GIAODICH, TB_GIAODICH[TRANGTHAI] = "GIẢM"))
-```
--  Hoặc đặt màu cho trạng thái mã cổ phiếu
-```
-Màu trạng thái trần = SWITCH(
+Set color based on price status:
+```DAX
+Status Color = SWITCH(
     TRUE(),
-    [Tổng giá cao nhất] < [Tổng giá mở cửa],
-    "#ff3737",
-    [Tổng giá cao nhất] > [Tổng giá mở cửa],
-    "#0f0",
-    [Tổng giá cao nhất] = [Tổng giá mở cửa],
-    "#FFA500"
+    [Highest Price] < [Open Price], "#ff3737",
+    [Highest Price] > [Open Price], "#0f0",
+    [Highest Price] = [Open Price], "#FFA500"
 )
 ```
-- **Xây dựng bảng hỗ trợ** như `Calendar`, `Khối Lượng Giao Dịch Table`, `Color Table`.
-```
+- **Build supporting tables** such as `Calendar`, `Volume Table`, `Color Table`:
+```DAX
 Calendar = ADDCOLUMNS(
-    CALENDAR(MIN(TB_GIAODICH[NGAYGIAODICH]),MAX(TB_GIAODICH[NGAYGIAODICH])),
-    "NAM", YEAR([Date]),
-    "THANG", MONTH([Date]),
-    "MonthName", FORMAT(MONTH([Date]),"MMMM"),
-    "NGAYTRONGTUAN", FORMAT(DAY([Date]),"DDDD"),
-    "QUY", FORMAT(QUARTER([Date]),"Q"),
-    "NAMQUY",FORMAT([Date],"YYYY") & "/Q" & FORMAT(QUARTER([Date]),"Q")
+    CALENDAR(MIN(TB_GIAODICH[NGAYGIAODICH]), MAX(TB_GIAODICH[NGAYGIAODICH])),
+    "YEAR", YEAR([Date]),
+    "MONTH", MONTH([Date]),
+    "MonthName", FORMAT(MONTH([Date]), "MMMM"),
+    "WEEKDAY", FORMAT(DAY([Date]), "DDDD"),
+    "QUARTER", FORMAT(QUARTER([Date]), "Q"),
+    "YEARQUARTER", FORMAT([Date], "YYYY") & "/Q" & FORMAT(QUARTER([Date]), "Q")
 )
 ```
-- **Tính toán các chỉ số quan trọng**, phân loại trạng thái giao dịch.
+
+- **Calculate key indicators**, classify trading status:
+```DAX
+TRANGTHAI = IF(
+	TB_GIAODICH[GIAMOCUA] > TB_GIAODICH[GIADONGCUA], "DECREASE",
+	IF(TB_GIAODICH[GIAMOCUA] = TB_GIAODICH[GIADONGCUA], "UNCHANGED", "INCREASE")
+)
 ```
-TRANGTHAI = IF(TB_GIAODICH[GIAMOCUA] > TB_GIAODICH[GIADONGCUA] , "GIẢM",
-            IF(TB_GIAODICH[GIAMOCUA] = TB_GIAODICH[GIADONGCUA], "THAM CHIẾU", "TĂNG"))
+
+## 🎨 Data Visualization
+
+- **Design charts and dashboards** using Power BI.
+- **Create dynamic reports**, with slicers and filters for easier analysis.
+- **Use appropriate visual types**, like KPIs, TreeMap, Line Charts for stock data.
+
+## 📌 Conclusion
+
+- This project enhances your data processing skills, from SQL to Power BI, and helps build interactive dashboards that support business decision-making.
+- The goal is to **practice data analysis and reporting skills** by building stock-related dashboards and calculating key market indicators.
+- For more details on the objective of each section, refer to **report.pdf**.
+
+## 📂 Folder Structure
+
+```
+📁 ProjectFolder/
+️
+📁 resource/              # Sample data like SAMPLE.bak
+📁 SQL/                   # SQL scripts: Process.sql, Clean.sql, etc.
+📁 PowerBI/               # Power BI report file (.pbix)
+📁 images/                # Images used in README
+📄 README.md              # Project documentation
+📄 report.pdf             # Detailed explanation of the process and findings
+📄 LICENSE                # (Optional) Open-source license
 ```
 
+## 💡 Suggestions for Expansion
 
-## 🎨 Trực Quan Hóa Dữ Liệu
+Here are some ideas to improve and expand the project:
 
-- **Thiết kế biểu đồ và dashboard** với Power BI.
-- **Tạo báo cáo động**, sử dụng slicer, filter để dễ dàng phân tích.
-- **Sử dụng các loại biểu đồ phù hợp**, như KPI, TreeMap, Line chart cho các mã cổ phiếu chứng khoán.
+- 🧠 **AI Integration**: Add machine learning models to forecast stock trends (Python or R).
+- 📅 **ETL Automation**: Automate daily data updates using APIs (e.g., Vietstock, Fireant, SSI).
+- 🌐 **Web Deployment**: Publish the report using Power BI Service or embed via iframe.
+- 🔐 **Access Control**: Use Row-Level Security (RLS) to restrict data visibility by user.
 
-![Image](https://github.com/user-attachments/assets/dbbd12da-8ab6-4cde-b251-ff5ca7a58645)
+## 🙋 Support & Contributions
 
-## 📌 Kết Luận
-- Dự án giúp nâng cao kỹ năng xử lý dữ liệu, từ SQL đến Power BI, và tạo ra một hệ thống báo cáo trực quan, hỗ trợ ra quyết định kinh doanh hiệu quả.
-- Mục tiêu của dự án hướng tới là tạo dashboard động cũng như tính toán các chỉ số cơ bản trong chứng khoán, nhằm thực hành các kỹ năng đã học.
-- Để biết thêm về mục tiêu của từng phần, vui lòng đọc file **report.pdf**
+If you encounter issues or want to contribute:
+- Open an [issue](https://github.com/your-repo/issues) for bug reports or suggestions.
+- Fork and submit a pull request to contribute code or improve the documentation.
+
+## 📄 License
+
+This project is licensed under the [MIT License](./LICENSE). Feel free to use, modify, and distribute it, provided that credit is given to the original author.
 
